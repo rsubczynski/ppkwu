@@ -12,8 +12,13 @@ public class HelloWorldController {
     public class RevController {
 
         @RequestMapping("/{items}")
-        public String mainPage(@PathVariable("items") String word) {
-            return new StringBuilder(word).reverse().toString();
+        public String mainPage(@PathVariable("mail") String mail,
+                               @PathVariable("nip") String nip,
+                               @PathVariable("regon") String regon,
+                               @PathVariable("pesel") String pesel,
+                               @PathVariable("postcode") String postcode
+        ) {
+            return mail + " " + nip + " " +  regon + " " +  pesel + " " +  pesel;
         }
     }
 }
