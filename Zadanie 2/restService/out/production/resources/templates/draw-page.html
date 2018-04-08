@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Losuj Zadanie</title>
+	<div th:replace="fragments/header :: header-css"/>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<link href="css/flipclock.css" rel="stylesheet" type="text/css"/>
+	<script src="js/flipclock.js"></script>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+	<div class="row" style="margin-top:20px">
+		<div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+
+			<div th:if="${randomFile == null}">
+				<form th:action="@{/losuj}" method="post">
+					<fieldset>
+						<br/>
+						<div th:if="${param.error}">
+							<div class="alert alert-danger">
+								Niepoprawna nazwa użytkownika lub hasło.
+							</div>
+						</div>
+						<h2>Losuj zadanie</h2>
+						<div class="row">
+							<div class="col-xs-6 col-sm-6 col-md-6">
+                                <input th:value="${userId}" type="hidden" name="userId"/>
+								<input type="submit" class="btn btn-lg btn-primary btn-block" value="Losuj"/>
+							</div>
+							<div class="col-xs-6 col-sm-6 col-md-6">
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div th:if="${randomFile != null}">
+			<form th:action="@{/fileDownload}" method="post">
+				<fieldset>
+					<br/>
+					<h2 th:inline="text">Pobierz zadanie: [[${randomFile}]]</h2>
+					<div class="row">
+						<div class="col-xs-6 col-sm-6 col-md-6">
+							<input th:value="${randomFile}" type="hidden" name="fileName"/>
+                            <input th:value="${userId}" type="hidden" name="userId"/>
+							<input type="submit" class="btn btn-lg btn-primary btn-block" value="Pobierz"/>
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6">
+						</div>
+					</div>
+				</fieldset>
+			</form>
+                <div th:if="${isUploaded}">
+                    Już wrzuciłeś swoje zmiany.
+                </div>
+                <div th:if="${clockSeconds == 0}">
+                    Czas minął.
+                </div>
+				<div th:if="${!isUploaded and clockSeconds > 0}">
+					<form method="POST"  th:action="@{/fileUpload}" enctype="multipart/form-data">
+						<fieldset>
+							<br/>
+							<h2>Wrzuć zadanie</h2>
+							<div class="row">
+								<div class="col-xs-6 col-sm-6 col-md-6">
+									<input type="file" name="file" />
+                                    <input th:value="${userId}" type="hidden" name="userId"/>
+									<input type="submit" class="btn btn-lg btn-primary btn-block" value="Wrzuć"/>
+								</div>
+								<div class="col-xs-6 col-sm-6 col-md-6">
+								</div>
+							</div>
+						</fieldset>
+					</form>
+					<script  th:inline="javascript" >
+                        /*<![CDATA[*/
+                        var clock;
+
+                        $(document).ready(function() {
+                            var showtext = [[${clockSeconds}]];
+                            console.log(showtext);
+                            clock = $('.clock').FlipClock(showtext
+								, {
+                                clockFace: 'MinutesCounter',
+                                countdown: true,
+                                autoStart: true,
+                                callbacks: {
+                                    start: function() {
+                                        // $('.message').html('The clock has started!');
+                                    },
+                                    stop: function() {
+                                        console.log("stopped");
+                                        $('.message').html('The clock has stopped!');
+                                        window.location.href = [[@{/login}]];
+
+                                    }
+                                }
+                            });
+
+                            $('.start').click(function(e) {
+
+                                clock.start();
+                            });
+
+                        });
+                        /*]]>*/
+					</script>
+				</div>
+
+				<div>
+					<ul>
+						<li th:each="file : ${files}">
+							<a th:href="${file}" th:text="${file}" />
+						</li>
+					</ul>
+				</div>
+				<div class="clock" style="margin:2em;"></div>
+				<div class="message"></div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

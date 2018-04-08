@@ -1,0 +1,14 @@
+spring:
+  application:
+    roomBarcode: CTI-multimedia-system
+
+  http:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+web-socket:
+  destinationPrefixes: /topic
+  prefixes: /app
+  paths: /cti-websocket
+
